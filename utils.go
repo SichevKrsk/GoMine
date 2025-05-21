@@ -1,0 +1,53 @@
+package main
+
+import (
+	"errors"
+	"math"
+
+	rl "github.com/gen2brain/raylib-go/raylib"
+)
+
+type Config struct {
+	GameName      string
+	TileDimension int32
+	RowNumber     int32
+	ColumnNumber  int32
+}
+
+func (c *Config) GetWindowDimensions() (int32, int32) {
+	return c.TileDimension * c.ColumnNumber, c.TileDimension * c.RowNumber
+}
+
+var config = Config{
+	GameName:      "Minesweeper",
+	TileDimension: 32,
+	RowNumber:     10,
+	ColumnNumber:  10,
+}
+
+func GetBoardCoordinates() (int32, int32, error) {
+	mousePos := rl.GetMousePosition()
+
+	X := int32(math.Floor(float64(mousePos.X / float32(config.TileDimension))))
+	Y := int32(math.Floor(float64(mousePos.Y / float32(config.TileDimension))))
+
+	if X >= config.ColumnNumber || Y >= config.RowNumber || X < 0 || Y < 0 {
+		return 0, 0, errors.New("coordinates are out of the board bounds")
+	}
+	return X, Y, nil
+}
+
+func DrawTile(posX, posY int32, color rl.Color) {
+	rl.DrawRectangle(posX*config.TileDimension, posY*config.TileDimension, config.TileDimension, config.TileDimension, color)
+	rl.DrawRectangleLines(posX*config.TileDimension, posY*config.TileDimension, config.TileDimension, config.TileDimension, rl.Black)
+}
+
+func DrawInTile(posX, posY, width, height int32, callback func(x, y int32)) {
+	x := posX * config.TileDimension
+	y := posY * config.TileDimension
+
+	textX := x + (config.TileDimension-width)/2
+	textY := y + (config.TileDimension-height)/2
+
+	callback(textX, textY)
+}
