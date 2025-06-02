@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
 )
 
@@ -14,20 +16,7 @@ type GameState struct {
 	BombsToFind   int32
 	BombsFound    int32
 	TilesRevealed int32
-	Board         Board
-}
-
-var board Board = Board{
-	NumberOfBombs: 10,
-	NumberOfTiles: 100,
-	Tiles:         testTiles,
-}
-
-var gamestate GameState = GameState{
-	BombsToFind:   10,
-	BombsFound:    0,
-	TilesRevealed: 0,
-	Board:         board,
+	Board         *Board
 }
 
 func (g *GameState) Reset() {
@@ -43,6 +32,28 @@ func (g *GameState) Check() {
 }
 
 func main() {
+	board, err := Generate(10, 10, 10)
+
+	if err != nil {
+		return
+	}
+
+	var gamestate GameState = GameState{
+		BombsToFind:   3,
+		BombsFound:    0,
+		TilesRevealed: 0,
+		Board:         board,
+	}
+
+	board.GameState = &gamestate
+
+	for i := 0; i < len(board.Tiles); i++ {
+		for j := 0; j < len(board.Tiles[i]); j++ {
+			fmt.Print("[", i, ",", j, "]=", board.Tiles[i][j].Value, " ")
+		}
+		fmt.Println()
+	}
+
 	windowWidth, windowHeight := config.GetWindowDimensions()
 	rl.InitWindow(windowWidth, windowHeight, config.GameName)
 

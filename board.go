@@ -7,6 +7,7 @@ import (
 type Board struct {
 	NumberOfBombs int32
 	NumberOfTiles int32
+	GameState     *GameState
 	Tiles         [][]*Tile
 }
 
@@ -33,7 +34,7 @@ func (b *Board) HandleInputs() {
 		return
 	}
 
-	tile := b.Tiles[Y][X]
+	tile := b.Tiles[X][Y]
 
 	if rl.IsMouseButtonPressed(rl.MouseButtonRight) {
 		if tile.Status == Flagged {
@@ -50,7 +51,7 @@ func (b *Board) HandleInputs() {
 	if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
 		if tile.Value == -1 {
 			tile.Status = Bomb
-			gamestate.Reset()
+			b.GameState.Reset()
 		} else {
 			tile.Status = Revealed
 		}
