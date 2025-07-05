@@ -4,58 +4,37 @@ import (
 	"fmt"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
+	"github.com/vargaadam23/GOsweeper/packages/ui"
 )
 
-//WIN CONDITION = all tiles revealed except bombs
-
-type Drawable interface {
-	Draw()
-}
-
-type GameState struct {
-	BombsToFind   int32
-	BombsFound    int32
-	TilesRevealed int32
-	Board         *Board
-}
-
-func (g *GameState) Reset() {
-	g.Board.Reset()
-	g.BombsFound = 0
-	g.TilesRevealed = 0
-}
-
-func (g *GameState) Check() {
-	if g.TilesRevealed == g.Board.NumberOfTiles-g.BombsToFind {
-		rl.DrawText("You WON", 150, 150, 30, rl.Red)
-	}
-}
+//Add relative height based on container pos
+//Add content
 
 func main() {
-	board, err := Generate(10, 10, 10)
 
-	if err != nil {
-		return
-	}
+	maincontainer :=
+		ui.CreateRootContainer(rl.Vector2{X: 0, Y: 0}, 800, 800).
+			AddContainer(rl.Vector2{X: 0, Y: 0}, 800, 200, rl.Beige, "header").
+			AddLabel(rl.Vector2{X: 0, Y: 0}, "Hello world", "lbl-1").
+			AddLabel(rl.Vector2{X: 0, Y: 100}, "Current score: 50", "lbl-2").
+			AddButton(rl.Vector2{X: 200, Y: 10}, "Reset", func() {
+				fmt.Println("Reset clicked")
+				ui.PublishEvent("lbl-1", "Reset was clicked")
+			}, "btn-1").
+			AddButton(rl.Vector2{X: 200, Y: 110}, "Hello world button", func() {
+				fmt.Println("Hello world button clicked")
+				ui.PublishEvent("lbl-1", "Hello world button clicked")
+			}, "btn-2").
+			EndContainerDefinition().
+			AddContainer(rl.Vector2{X: 0, Y: 200}, 800, 600, rl.Blue, "content").
+			AddLabel(rl.Vector2{X: 0, Y: 100}, "Current score: 50", "lbl-2").
+			AddButton(rl.Vector2{X: 200, Y: 110}, "Hello world button", func() {
+				fmt.Println("Hello world button clicked")
+				ui.PublishEvent("lbl-1", "Hello world button clicked")
+			}, "btn-2").
+			EndContainerDefinition()
 
-	var gamestate GameState = GameState{
-		BombsToFind:   3,
-		BombsFound:    0,
-		TilesRevealed: 0,
-		Board:         board,
-	}
-
-	board.GameState = &gamestate
-
-	for i := 0; i < len(board.Tiles); i++ {
-		for j := 0; j < len(board.Tiles[i]); j++ {
-			fmt.Print("[", i, ",", j, "]=", board.Tiles[i][j].Value, " ")
-		}
-		fmt.Println()
-	}
-
-	windowWidth, windowHeight := config.GetWindowDimensions()
-	rl.InitWindow(windowWidth, windowHeight, config.GameName)
+	rl.InitWindow(800, 800, config.GameName)
 
 	defer rl.CloseWindow()
 
@@ -65,9 +44,7 @@ func main() {
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.RayWhite)
 
-		gamestate.Check()
-		board.Draw()
-		board.HandleInputs()
+		maincontainer.Draw()
 
 		rl.EndDrawing()
 	}

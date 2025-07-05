@@ -5,6 +5,7 @@ import (
 )
 
 type Board struct {
+	Position      rl.Vector2
 	NumberOfBombs int32
 	NumberOfTiles int32
 	GameState     *GameState
@@ -37,9 +38,10 @@ func (b *Board) HandleInputs() {
 	tile := b.Tiles[X][Y]
 
 	if rl.IsMouseButtonPressed(rl.MouseButtonRight) {
-		if tile.Status == Flagged {
+		switch tile.Status {
+		case Flagged:
 			tile.Status = Hidden
-		} else if tile.Status == Hidden {
+		case Hidden:
 			tile.Status = Flagged
 		}
 	}
@@ -52,8 +54,10 @@ func (b *Board) HandleInputs() {
 		if tile.Value == -1 {
 			tile.Status = Bomb
 			b.GameState.Reset()
+
 		} else {
 			tile.Status = Revealed
+			b.GameState.TilesRevealed = b.GameState.TilesRevealed + 1
 		}
 	}
 }

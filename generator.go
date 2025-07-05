@@ -41,6 +41,12 @@ func Generate(numberOfBombs, columns, rows int32) (*Board, error) {
 	for i := 0; i < int(numberOfBombs); i++ {
 		x := rand.Intn(int(rows))
 		y := rand.Intn(int(columns))
+
+		for board.Tiles[x][y].Value == -1 {
+			x = rand.Intn(int(rows))
+			y = rand.Intn(int(columns))
+		}
+
 		board.Tiles[x][y].Value = -1
 	}
 
@@ -75,3 +81,5 @@ func Generate(numberOfBombs, columns, rows int32) (*Board, error) {
 
 	return &board, nil
 }
+
+//TODO: Tester function that checks if board is valid
