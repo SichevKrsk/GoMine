@@ -13,9 +13,11 @@ type Board struct {
 }
 
 func (b *Board) Draw() {
+	offsetX := int32(b.Position.X)
+	offsetY := int32(b.Position.Y)
 	for i := 0; i < len(b.Tiles); i++ {
 		for j := 0; j < len(b.Tiles[i]); j++ {
-			b.Tiles[i][j].Draw()
+			b.Tiles[i][j].Draw(offsetX, offsetY)
 		}
 	}
 }
@@ -29,7 +31,9 @@ func (b *Board) Reset() {
 }
 
 func (b *Board) HandleInputs() {
-	X, Y, err := GetBoardCoordinates()
+	offsetX := int32(b.Position.X)
+	offsetY := int32(b.Position.Y)
+	X, Y, err := GetBoardCoordinates(offsetX, offsetY)
 
 	if err != nil {
 		return
@@ -41,8 +45,10 @@ func (b *Board) HandleInputs() {
 		switch tile.Status {
 		case Flagged:
 			tile.Status = Hidden
+			b.GameState.BombsFound--
 		case Hidden:
 			tile.Status = Flagged
+			b.GameState.BombsFound++
 		}
 	}
 
@@ -53,8 +59,8 @@ func (b *Board) HandleInputs() {
 	if rl.IsMouseButtonPressed(rl.MouseButtonLeft) {
 		if tile.Value == -1 {
 			tile.Status = Bomb
-			b.GameState.Reset()
-
+			b.GameState.GameLost = true
+			b.GameState.GameActive = false
 		} else {
 			tile.Status = Revealed
 			b.GameState.TilesRevealed = b.GameState.TilesRevealed + 1

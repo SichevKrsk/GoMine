@@ -21,7 +21,7 @@ type Tile struct {
 	Status TileStatus
 }
 
-func (t *Tile) Draw() {
+func (t *Tile) Draw(offsetX, offsetY int32) {
 	var color rl.Color
 	switch t.Status {
 	case Hidden:
@@ -36,7 +36,7 @@ func (t *Tile) Draw() {
 		color = rl.Beige
 	}
 
-	DrawTile(t.X, t.Y, color)
+	DrawTile(t.X, t.Y, offsetX, offsetY, color)
 
 	// Draw number if revealed and not a bomb and value > 0
 	if t.Status == Revealed {
@@ -44,7 +44,7 @@ func (t *Tile) Draw() {
 			text := strconv.Itoa(int(t.Value))
 			fontSize := int32(20)
 			textWidth := rl.MeasureText(text, fontSize)
-			DrawInTile(t.X, t.Y, textWidth, fontSize, func(x, y int32) {
+			DrawInTile(t.X, t.Y, textWidth, fontSize, offsetX, offsetY, func(x, y int32) {
 				rl.DrawText(text, x, y, fontSize, rl.Green)
 			})
 		}
