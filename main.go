@@ -6,57 +6,9 @@ import (
 	"time"
 
 	rl "github.com/gen2brain/raylib-go/raylib"
-	"github.com/vargaadam23/GOsweeper/packages/ui"
+
+	"github.com/sichevkrsk/GoMine/packages/ui"
 )
-
-// GameState manages the current game state
-type GameState struct {
-	BombsToFind   int32
-	BombsFound    int32
-	TilesRevealed int32
-	Board         *Board
-	GameActive    bool
-	GameWon       bool
-	GameLost      bool
-}
-
-func (g *GameState) Reset() {
-	if g.Board != nil {
-		g.Board.Reset()
-	}
-	g.BombsFound = 0
-	g.TilesRevealed = 0
-	g.GameActive = false
-	g.GameWon = false
-	g.GameLost = false
-}
-
-func (g *GameState) Check() {
-	if g.GameActive && g.TilesRevealed == g.Board.NumberOfTiles-g.BombsToFind {
-		g.GameWon = true
-		g.GameActive = false
-	}
-}
-
-func (g *GameState) StartNewGame() {
-	// Generate new board with 10 bombs on 10x10 grid
-	board, err := Generate(10, 10, 10)
-	if err != nil {
-		fmt.Println("Error generating board:", err)
-		return
-	}
-
-	g.Board = board
-	g.BombsToFind = 10
-	g.BombsFound = 0
-	g.TilesRevealed = 0
-	g.GameActive = true
-	g.GameWon = false
-	g.GameLost = false
-
-	// Set the game state reference in the board
-	board.GameState = g
-}
 
 func main() {
 	// Initialize random seed
@@ -70,7 +22,7 @@ func main() {
 	maincontainer :=
 		ui.CreateRootContainer(rl.Vector2{X: 0, Y: 0}, 800, 600).
 			AddContainer(rl.Vector2{X: 0, Y: 0}, 800, 100, rl.LightGray, "header").
-			AddLabel(rl.Vector2{X: 10, Y: 10}, "GOsweeper", "title").
+			AddLabel(rl.Vector2{X: 10, Y: 10}, "GoMine", "title").
 			AddLabel(rl.Vector2{X: 10, Y: 40}, "Flags: 0/10", "flag-counter").
 			AddLabel(rl.Vector2{X: 10, Y: 70}, "Status: Menu", "game-status").
 			AddButton(rl.Vector2{X: 600, Y: 20}, "New Game", func() {
@@ -81,7 +33,7 @@ func main() {
 			EndContainerDefinition().
 			AddContainer(rl.Vector2{X: 0, Y: 100}, 800, 500, rl.White, "game-area").EndContainerDefinition()
 
-	rl.InitWindow(800, 600, "GOsweeper")
+	rl.InitWindow(800, 600, "GoMine")
 
 	defer rl.CloseWindow()
 

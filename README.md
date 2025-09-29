@@ -1,4 +1,6 @@
-# 💣 GOsweeper
+# 💣 GoMine
+
+> Forked from [vargaadam23/GOsweeper](https://github.com/vargaadam23/GOsweeper)
 
 A desktop Minesweeper clone written in **Go**, built using the [raylib-go](https://github.com/gen2brain/raylib-go) game library. ⚙️🎮
 
@@ -39,7 +41,7 @@ A desktop Minesweeper clone written in **Go**, built using the [raylib-go](https
 
 ### Requirements
 
-- Go 1.20+
+- Go 1.24+
 - raylib-go and its native dependencies
 
 Refer to [raylib-go setup guide](https://github.com/gen2brain/raylib-go#requirements) for full instructions.
@@ -47,5 +49,5 @@ Refer to [raylib-go setup guide](https://github.com/gen2brain/raylib-go#requirem
 ### Launch (once implemented)
 
 ```bash
-go run main.go
+go run .
 ```

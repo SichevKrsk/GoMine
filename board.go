@@ -62,8 +62,47 @@ func (b *Board) HandleInputs() {
 			b.GameState.GameLost = true
 			b.GameState.GameActive = false
 		} else {
-			tile.Status = Revealed
-			b.GameState.TilesRevealed = b.GameState.TilesRevealed + 1
+			b.revealTileAndAdjacent(int32(X), int32(Y))
+		}
+	}
+}
+
+// revealTileAndAdjacent reveals a tile and recursively reveals adjacent empty tiles
+func (b *Board) revealTileAndAdjacent(x, y int32) {
+	// Check bounds
+	if x < 0 || x >= int32(len(b.Tiles)) || y < 0 || y >= int32(len(b.Tiles[0])) {
+		return
+	}
+
+	tile := b.Tiles[x][y]
+
+	// If tile is already revealed or flagged, don't do anything
+	if tile.Status != Hidden {
+		return
+	}
+
+	// Reveal the current tile
+	tile.Status = Revealed
+	b.GameState.TilesRevealed++
+
+	// If this tile has a value (number of adjacent bombs), don't reveal adjacent tiles
+	if tile.Value > 0 {
+		return
+	}
+
+	// If this tile is empty (value == 0), reveal all adjacent tiles
+	for dx := int32(-1); dx <= 1; dx++ {
+		for dy := int32(-1); dy <= 1; dy++ {
+			// Skip the current tile itself
+			if dx == 0 && dy == 0 {
+				continue
+			}
+
+			newX := x + dx
+			newY := y + dy
+
+			// Recursively reveal adjacent tiles
+			b.revealTileAndAdjacent(newX, newY)
 		}
 	}
 }
